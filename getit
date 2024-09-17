@@ -1,0 +1,46 @@
+<script>
+    const scriptURL = &#39;https://script.google.com/macros/s/AKfycbxO1S1Zoo3ullc-VgPSH8jfQkiUcU8mE_97ISKbRFcHRSbIL0lj1LJG0wMDEBpNegBXXw/exec&#39;;
+    const form = document.forms[&#39;product&#39;];
+    const messageDiv = document.createElement(&#39;div&#39;); // Create a div for displaying messages
+    form.appendChild(messageDiv); // Append the message div to the form
+
+    form.addEventListener(&#39;submit&#39;, e =&gt; {
+        e.preventDefault();
+
+        const email = form[&#39;email&#39;].value;
+        const name = form[&#39;name&#39;].value;
+
+        if (!validateEmail(email)) {
+            showMessage(&#39;Please enter a valid email address.&#39;, &#39;white&#39;);
+            return;
+        }
+
+        if (!validateName(name)) {
+            showMessage(&#39;Please enter your name.&#39;, &#39;red&#39;);
+            return;
+        }
+
+        fetch(scriptURL, { method: &#39;POST&#39;, body: new FormData(form)})
+            .then(response =&gt; {
+                showMessage(&#39;Thanks! Your Gift Will Reach You Soon.&#39;, &#39;white&#39;);
+                form.reset(); // Reset the form fields
+            })
+            .catch(error =&gt; showMessage(&#39;There was an error! Please try again later.&#39;, &#39;black&#39;));
+    });
+
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    function validateName(name) {
+        return name.trim() !== &#39;&#39;;
+    }
+
+    function showMessage(message, color) {
+        messageDiv.innerHTML = `<p style='color: ${color}; font-size: 1.5em;margin-top:10px;'>${message}</p>`;
+        setTimeout(() =&gt; {
+            messageDiv.innerHTML = &#39;&#39;; // Clear the message after 5 seconds
+        }, 5000); // Adjust the timeout duration as needed
+    }
+</script>
